@@ -3,94 +3,265 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shafer's Mini Hoops</title>
+  <title>HoopDreams Mini - Basketball Hoop Shop</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #ffffff;
-      color: #111;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-    }
-    header {
-      background-color: #ff2c2c;
-      color: white;
-      width: 100%;
-      text-align: center;
-      padding: 20px 0;
-      font-size: 2rem;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-    .product-section {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 40px;
-    }
-    .product {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-    .product img {
-      width: 350px;
-      height: auto;
-      border: 3px solid #d3d3d3;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-    .price {
-      font-size: 1.2rem;
-      color: #333;
-      margin-top: 10px;
-    }
-    button {
-      background-color: #ff2c2c;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      margin-top: 10px;
-      cursor: pointer;
-      font-size: 1rem;
-      transition: 0.3s;
-    }
-    button:hover {
-      background-color: #e02424;
-    }
-    footer {
-      margin-top: 50px;
-      padding: 20px;
-      background-color: #f5f5f5;
-      width: 100%;
-      text-align: center;
-      color: #666;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
   </style>
 </head>
 <body>
-  <header>Shafer's Mini Hoops</header>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState } = React;
 
-  <section class="product-section">
-    <div class="product">
-      <img src="Screenshot 2025-11-12 110650.png" alt="Mini Hoop">
-      <div class="price">Mini Hoop - $35</div>
-      <button>Add to Cart</button>
-    </div>
+    function App() {
+      const [selectedColor, setSelectedColor] = useState('orange');
+      const [quantity, setQuantity] = useState(1);
+      const [addedToCart, setAddedToCart] = useState(false);
+      const [cartOpen, setCartOpen] = useState(false);
+      const [cartItems, setCartItems] = useState([]);
 
-    <div class="product">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Basketball.png" alt="Mini Ball" width="150">
-      <div class="price">Mini Ball - $5</div>
-      <button>Add to Cart</button>
-    </div>
-  </section>
+      const colors = [
+        { name: 'Classic Orange', value: 'orange', hex: '#FF6B35', hue: 0 },
+        { name: 'Electric Blue', value: 'blue', hex: '#3B82F6', hue: 200 },
+        { name: 'Neon Green', value: 'green', hex: '#10B981', hue: 100 },
+        { name: 'Hot Pink', value: 'pink', hex: '#EC4899', hue: 320 },
+        { name: 'Purple', value: 'purple', hex: '#8B5CF6', hue: 270 },
+        { name: 'Red', value: 'red', hex: '#EF4444', hue: 350 }
+      ];
 
-  <footer>
-    © 2025 Shafer's Mini Hoops — All handmade with care 🏀
-  </footer>
+      const basePrice = 29.99;
+      const totalPrice = (basePrice * quantity).toFixed(2);
+      const currentColor = colors.find(c => c.value === selectedColor);
+
+      const handleAddToCart = () => {
+        const newItem = {
+          id: Date.now(),
+          color: selectedColor,
+          colorName: currentColor?.name,
+          colorHex: currentColor?.hex,
+          quantity: quantity,
+          price: basePrice
+        };
+        setCartItems([...cartItems, newItem]);
+        setAddedToCart(true);
+        setTimeout(() => setAddedToCart(false), 2000);
+      };
+
+      const removeFromCart = (id) => {
+        setCartItems(cartItems.filter(item => item.id !== id));
+      };
+
+      const cartTotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
+      const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+          {/* Header */}
+          <header className="bg-slate-800/50 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-40">
+            <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+              <div className="flex items-center gap-2">
+                <div className="text-3xl">🏀</div>
+                <h1 className="text-2xl font-bold text-white">HoopDreams Mini</h1>
+              </div>
+              <button onClick={() => setCartOpen(true)} className="relative p-2 text-white hover:bg-slate-700 rounded-lg transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                {cartItemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                    {cartItemCount}
+                  </span>
+                )}
+              </button>
+            </div>
+          </header>
+
+          {/* Cart Sidebar */}
+          {cartOpen && (
+            <>
+              <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setCartOpen(false)} />
+              <div className="fixed right-0 top-0 h-full w-full max-w-md bg-slate-800 z-50 shadow-2xl overflow-y-auto">
+                <div className="p-6">
+                  <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-white">Your Cart</h2>
+                    <button onClick={() => setCartOpen(false)} className="p-2 hover:bg-slate-700 rounded-lg transition">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                    </button>
+                  </div>
+                  {cartItems.length === 0 ? (
+                    <div className="text-center py-12">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#475569" strokeWidth="2" className="mx-auto mb-4"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+                      <p className="text-slate-400 text-lg">Your cart is empty</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="space-y-4 mb-6">
+                        {cartItems.map((item) => (
+                          <div key={item.id} className="bg-slate-700/50 rounded-lg p-4 border border-slate-600">
+                            <div className="flex gap-4">
+                              <div className="w-16 h-16 rounded-lg flex-shrink-0" style={{ backgroundColor: item.colorHex }} />
+                              <div className="flex-1">
+                                <h3 className="text-white font-semibold">Mini Basketball Hoop</h3>
+                                <p className="text-slate-400 text-sm">{item.colorName}</p>
+                                <p className="text-slate-300 text-sm mt-1">Qty: {item.quantity} x ${item.price.toFixed(2)}</p>
+                              </div>
+                              <div className="flex flex-col items-end justify-between">
+                                <button onClick={() => removeFromCart(item.id)} className="p-1 hover:bg-slate-600 rounded transition">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f87171" strokeWidth="2"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                </button>
+                                <p className="text-white font-bold">${(item.price * item.quantity).toFixed(2)}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="border-t border-slate-600 pt-4 mb-6">
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-slate-400">Subtotal</span>
+                          <span className="text-white font-semibold">${cartTotal}</span>
+                        </div>
+                        <div className="flex justify-between items-center mb-2">
+                          <span className="text-slate-400">Shipping</span>
+                          <span className="text-green-400 font-semibold">FREE</span>
+                        </div>
+                        <div className="flex justify-between items-center text-xl font-bold border-t border-slate-600 pt-2 mt-2">
+                          <span className="text-white">Total</span>
+                          <span className="text-white">${cartTotal}</span>
+                        </div>
+                      </div>
+                      <button className="w-full py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition">
+                        Proceed to Checkout
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Main Content */}
+          <main className="max-w-7xl mx-auto px-4 py-12">
+            <div className="grid md:grid-cols-2 gap-12 items-start">
+              {/* Product Image */}
+              <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-8 border border-slate-700">
+                <div className="relative aspect-square flex items-center justify-center bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl overflow-hidden">
+                  <svg viewBox="0 0 200 220" className="w-full h-full p-4">
+                    <defs>
+                      <linearGradient id="woodGrain" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stopColor="#c9a66b" />
+                        <stop offset="50%" stopColor="#a67c52" />
+                        <stop offset="100%" stopColor="#8b5a2b" />
+                      </linearGradient>
+                    </defs>
+                    <rect x="15" y="20" width="170" height="120" rx="4" fill="url(#woodGrain)" stroke="#2d1810" strokeWidth="8"/>
+                    <rect x="60" y="50" width="80" height="60" rx="2" fill="none" stroke="#2d1810" strokeWidth="4"/>
+                    <rect x="85" y="135" width="30" height="15" fill="#444"/>
+                    <ellipse cx="100" cy="155" rx="35" ry="8" fill={currentColor?.hex} stroke="#222" strokeWidth="3"/>
+                    <g stroke={currentColor?.hex} strokeWidth="2" opacity="0.8">
+                      <line x1="68" y1="158" x2="80" y2="195" />
+                      <line x1="77" y1="158" x2="85" y2="195" />
+                      <line x1="89" y1="158" x2="92" y2="195" />
+                      <line x1="100" y1="158" x2="100" y2="195" />
+                      <line x1="111" y1="158" x2="108" y2="195" />
+                      <line x1="123" y1="158" x2="115" y2="195" />
+                      <line x1="132" y1="158" x2="120" y2="195" />
+                      <ellipse cx="100" cy="175" rx="25" ry="5" fill="none"/>
+                      <ellipse cx="100" cy="195" rx="18" ry="4" fill="none"/>
+                    </g>
+                    <circle cx="165" cy="180" r="18" fill="#1a1a1a"/>
+                    <circle cx="35" cy="185" r="14" fill="#f97316" stroke="#222" strokeWidth="2"/>
+                    <path d="M25 185 Q35 180 45 185 M25 185 Q35 190 45 185" stroke="#222" strokeWidth="1.5" fill="none"/>
+                    <line x1="35" y1="171" x2="35" y2="199" stroke="#222" strokeWidth="1.5"/>
+                  </svg>
+                </div>
+                <div className="mt-6 text-center">
+                  <div className="inline-block px-4 py-2 bg-slate-700/50 rounded-lg">
+                    <p className="text-sm text-slate-300">Selected Color:</p>
+                    <p className="text-lg font-semibold text-white">{currentColor?.name}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Product Details */}
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-4xl font-bold text-white mb-2">Premium Mini Basketball Hoop</h2>
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="flex text-yellow-400">★★★★★</div>
+                    <span className="text-slate-400">(247 reviews)</span>
+                  </div>
+                  <p className="text-3xl font-bold text-green-400">${totalPrice}</p>
+                </div>
+
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
+                  <p className="text-slate-300 leading-relaxed">
+                    Transform any door or wall into your personal basketball court! This premium mini hoop features a durable wood-grain backboard, professional-grade rim, and all-weather net.
+                  </p>
+                </div>
+
+                {/* Color Selection */}
+                <div>
+                  <label className="block text-white font-semibold mb-3">Choose Your Hoop Color:</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {colors.map((color) => (
+                      <button
+                        key={color.value}
+                        onClick={() => setSelectedColor(color.value)}
+                        className={`relative p-4 rounded-xl border-2 transition-all ${selectedColor === color.value ? 'border-white shadow-lg scale-105' : 'border-slate-600 hover:border-slate-500'}`}
+                      >
+                        <div className="w-full h-12 rounded-lg mb-2" style={{ backgroundColor: color.hex }} />
+                        <p className="text-sm text-white font-medium">{color.name}</p>
+                        {selectedColor === color.value && (
+                          <div className="absolute top-2 right-2 bg-white rounded-full p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e293b" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Quantity */}
+                <div>
+                  <label className="block text-white font-semibold mb-3">Quantity:</label>
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="w-12 h-12 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition text-xl font-bold">-</button>
+                    <span className="text-2xl font-bold text-white w-12 text-center">{quantity}</span>
+                    <button onClick={() => setQuantity(Math.min(10, quantity + 1))} className="w-12 h-12 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition text-xl font-bold">+</button>
+                  </div>
+                </div>
+
+                {/* Add to Cart */}
+                <button
+                  onClick={handleAddToCart}
+                  className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${addedToCart ? 'bg-green-500 text-white' : 'bg-gradient-to-r from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'}`}
+                >
+                  {addedToCart ? '✓ Added to Cart!' : '🛒 Add to Cart'}
+                </button>
+
+                {/* Features */}
+                <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-slate-700">
+                  <h3 className="text-white font-bold mb-3">Features:</h3>
+                  <ul className="space-y-2 text-slate-300">
+                    <li className="flex items-start gap-2"><span className="text-green-400">✓</span>Shatterproof backboard (18 x 12 inches)</li>
+                    <li className="flex items-start gap-2"><span className="text-green-400">✓</span>Easy door mount installation</li>
+                    <li className="flex items-start gap-2"><span className="text-green-400">✓</span>Includes 6 inch mini basketball</li>
+                    <li className="flex items-start gap-2"><span className="text-green-400">✓</span>Premium all-weather net</li>
+                    <li className="flex items-start gap-2"><span className="text-green-400">✓</span>Free shipping on all orders</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
